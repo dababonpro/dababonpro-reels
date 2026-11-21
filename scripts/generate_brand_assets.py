@@ -356,6 +356,113 @@ YOUTUBE_WATERMARK_HTML = """<!doctype html>
 """
 
 
+GITHUB_SOCIAL_HTML = """<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1280px;
+    height: 640px;
+    background: #070b12;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    position: relative;
+    overflow: hidden;
+    color: #f0f6fc;
+  }
+  .grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(56,139,253,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56,139,253,0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .glow {
+    position: absolute;
+    width: 900px;
+    height: 520px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(31,111,235,0.26) 0%, transparent 70%);
+  }
+  .card {
+    position: relative;
+    z-index: 1;
+    width: 1120px;
+    padding: 56px 64px;
+    border-radius: 28px;
+    background: rgba(13, 17, 23, 0.88);
+    border: 2px solid #30363d;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.55);
+  }
+  .pill {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 20px;
+    border-radius: 999px;
+    background: rgba(31,111,235,0.16);
+    border: 1.5px solid rgba(56,189,248,0.55);
+    color: #7dd3fc;
+    font-family: "Consolas", monospace;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  h1 {
+    font-size: 68px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.08;
+  }
+  h1 span { color: #38bdf8; }
+  p {
+    font-size: 28px;
+    color: #8b949e;
+    line-height: 1.4;
+  }
+  .chips {
+    display: flex;
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .chip {
+    padding: 8px 18px;
+    border-radius: 10px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    color: #c9d1d9;
+    font-family: "Consolas", monospace;
+    font-size: 18px;
+  }
+</style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="glow"></div>
+  <div class="card">
+    <div class="pill">&gt;_ dababonpro/dababonpro-reels</div>
+    <h1>Automated <span>9:16 Reels</span> &amp; AI Skill</h1>
+    <p>Playwright + FFmpeg + Neural TTS pipeline for Facebook Reels, YouTube Shorts, and TikTok.</p>
+    <div class="chips">
+      <div class="chip">Meta Graph API</div>
+      <div class="chip">YouTube Data API v3</div>
+      <div class="chip">SKILL.md</div>
+      <div class="chip">MP4 Verifier</div>
+    </div>
+  </div>
+</body>
+</html>
+"""
+
+
 def main() -> None:
     ASSETS_DIR.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
@@ -389,12 +496,20 @@ def main() -> None:
         page.screenshot(path=str(wm_out))
         page.close()
 
+        # GitHub social preview (1280x640)
+        page = browser.new_page(viewport={"width": 1280, "height": 640}, device_scale_factor=1)
+        page.set_content(GITHUB_SOCIAL_HTML)
+        gh_out = ASSETS_DIR / "github_social_preview.png"
+        page.screenshot(path=str(gh_out))
+        page.close()
+
         browser.close()
 
     print(f"Generated: {profile_out}")
     print(f"Generated: {cover_out}")
     print(f"Generated: {yt_out}")
     print(f"Generated: {wm_out}")
+    print(f"Generated: {gh_out}")
 
 
 if __name__ == "__main__":
