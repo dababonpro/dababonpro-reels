@@ -275,6 +275,7 @@ def render_reel(
     pitch: str = "-8Hz",
     badge_path: Path | None = None,
     tts_engine: str = "edge",
+    voice_env: str = "ELEVENLABS_VOICE_ID",
 ) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -295,8 +296,9 @@ def render_reel(
         if script:
             voice_mp3 = tmp / "voice.mp3"
             if tts_engine == "elevenlabs":
+                import os
                 load_env(Path(__file__).resolve().parent.parent / ".env")
-                dur, words = synth_elevenlabs_tts(script, voice_mp3)
+                dur, words = synth_elevenlabs_tts(script, voice_mp3, voice_id=os.environ.get(voice_env, "").strip())
             else:
                 dur, words = asyncio.run(synth_narration(script, voice_mp3, voice, rate, pitch))
             duration = max(12, math.ceil(dur + 0.8))
@@ -381,6 +383,7 @@ def main() -> None:
     parser.add_argument("--voice", default="en-US-ChristopherNeural", help="Edge TTS voice for --script")
     parser.add_argument("--pitch", default="-8Hz", help="TTS pitch offset")
     parser.add_argument("--tts", default="edge", choices=["edge", "elevenlabs"], help="TTS engine for --script")
+    parser.add_argument("--voice-env", default="ELEVENLABS_VOICE_ID", help="Env var name for ElevenLabs voice ID")
     parser.add_argument("--badge", help="Optional circular mascot image path")
     parser.add_argument("--batch", help="Path to JSON batch file")
     args = parser.parse_args()
@@ -423,6 +426,7 @@ def main() -> None:
         pitch=args.pitch,
         badge_path=Path(args.badge) if args.badge else None,
         tts_engine=args.tts,
+        voice_env=args.voice_env,
     )
     print(f"Done: {args.out}")
 
