@@ -30,7 +30,9 @@ Use this skill to research topics, generate 9:16 vertical videos, and publish or
      ```powershell
      python scripts/generate_repo_reel.py --batch content/week-01-batch.json --audio assets/audio/synth_tech_loop.mp3
      ```
-3. **Publish / Schedule**
+3. **Verify Before Publishing (Required Gate)**
+   - Run `python scripts/verify_reel.py out/*.mp4` to confirm `1080x1920`, `h264`/`yuv420p`, duration `8–60s`, and non-silent audio (`> -60 dB`).
+4. **Publish / Schedule**
    - **Facebook:** `python scripts/publish_reel.py --video <mp4> --caption "<caption>" [--schedule <unix_ts>]`
    - **YouTube Shorts:** `python scripts/publish_youtube.py --video <mp4> --title "<Title> #Shorts" --description "<desc>" --privacy public` (or `--privacy private --publish-at <ISO-UTC>`)
    - **TikTok:** Upload manually via `tiktok.com/tiktokstudio/upload` (leave Location blank, keep High-quality uploads ON, AI-generated content OFF for real repo captures).
