@@ -238,6 +238,24 @@ def draw_bold_captions(frame: Image.Image, words: list[dict], t: float) -> Image
     return frame
 
 
+def paste_circular_badge(frame: Image.Image, badge_path: Path, size: int = 160) -> Image.Image:
+    src = Image.open(badge_path).convert("RGBA")
+    side = min(src.width, src.height)
+    left = (src.width - side) // 2
+    top = (src.height - side) // 2
+    src = src.crop((left, top, left + side, top + side)).resize((size, size), Image.Resampling.LANCZOS)
+
+    mask = Image.new("L", (size, size), 0)
+    ImageDraw.Draw(mask).ellipse((0, 0, size - 1, size - 1), fill=255)
+
+    bx = WIN_X + WIN_W - size - 24
+    by = WIN_Y + TITLEBAR_H + 24
+    draw = ImageDraw.Draw(frame)
+    draw.ellipse((bx - 4, by - 4, bx + size + 4, by + size + 4), fill=(56, 189, 248))
+    frame.paste(src, (bx, by), mask)
+    return frame
+
+
 def render_reel(
     repo_url: str,
     tag: str,
@@ -250,6 +268,7 @@ def render_reel(
     voice: str = "en-US-ChristopherNeural",
     rate: str = "+5%",
     pitch: str = "-8Hz",
+    badge_path: Path | None = None,
 ) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -326,6 +345,8 @@ def render_reel(
                 crop = repo_img.crop((0, scroll_y, WIN_W, scroll_y + VIEWPORT_H))
                 frame = base_frame.copy()
                 frame.paste(crop, (WIN_X, WIN_Y + TITLEBAR_H))
+                if badge_path and badge_path.exists():
+                    frame = paste_circular_badge(frame, badge_path)
                 if words:
                     frame = draw_bold_captions(frame, words, frame_idx / fps)
                 proc.stdin.write(frame.tobytes())
@@ -349,6 +370,7 @@ def main() -> None:
     parser.add_argument("--script", help="Optional voiceover script (enables deep TTS + bold kinetic captions)")
     parser.add_argument("--voice", default="en-US-ChristopherNeural", help="Edge TTS voice for --script")
     parser.add_argument("--pitch", default="-8Hz", help="TTS pitch offset")
+    parser.add_argument("--badge", help="Optional circular mascot image path")
     parser.add_argument("--batch", help="Path to JSON batch file")
     args = parser.parse_args()
 
@@ -388,6 +410,7 @@ def main() -> None:
         script=args.script,
         voice=args.voice,
         pitch=args.pitch,
+        badge_path=Path(args.badge) if args.badge else None,
     )
     print(f"Done: {args.out}")
 
