@@ -182,12 +182,14 @@ def draw_kinetic_caption(frame: Image.Image, words: list[dict], local_t: float) 
     x = (WIDTH - total_w) // 2
     y = 1500
 
+    pad_x, pad_y = 16, 12
     for idx, item in enumerate(chunk):
         is_active = (chunk_start + idx) == active_idx
         w_text = item["text"]
         tw = widths[idx]
         if is_active:
-            draw.rounded_rectangle([x - 16, y - 10, x + tw + 16, y + 72], radius=16, fill=(250, 204, 21))
+            bx0, by0, bx1, by1 = draw.textbbox((x, y), w_text, font=font)
+            draw.rounded_rectangle([bx0 - pad_x, by0 - pad_y, bx1 + pad_x, by1 + pad_y], radius=16, fill=(250, 204, 21))
             draw.text((x, y), w_text, font=font, fill=(11, 15, 23))
         else:
             draw.text((x, y), w_text, font=font, fill=TEXT_PRIMARY, stroke_width=6, stroke_fill=(0, 0, 0))
