@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 import json
 import math
 import subprocess
@@ -10,6 +11,7 @@ import tempfile
 from pathlib import Path
 from urllib.parse import urlparse
 
+import edge_tts
 from PIL import Image, ImageDraw, ImageFont
 from playwright.sync_api import sync_playwright
 
@@ -171,6 +173,67 @@ def ease_in_out(t: float) -> float:
     return 0.5 * (1.0 - math.cos(math.pi * max(0.0, min(1.0, t))))
 
 
+async def synth_narration(text: str, out_mp3: Path, voice: str, rate: str, pitch: str) -> tuple[float, list[dict]]:
+    communicate = edge_tts.Communicate(text, voice=voice, rate=rate, pitch=pitch, boundary="WordBoundary")
+    words: list[dict] = []
+    audio_chunks = bytearray()
+    async for chunk in communicate.stream():
+        if chunk["type"] == "audio":
+            audio_chunks.extend(chunk["data"])
+        elif chunk["type"] == "WordBoundary":
+            words.append({
+                "text": chunk["text"].upper(),
+                "start": chunk["offset"] / 10_000_000.0,
+                "end": (chunk["offset"] + chunk["duration"]) / 10_000_000.0,
+            })
+    out_mp3.write_bytes(bytes(audio_chunks))
+    probe = subprocess.run(
+        ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=nw=1:nk=1", str(out_mp3)],
+        capture_output=True, text=True, check=True,
+    )
+    return float(probe.stdout.strip()), words
+
+
+def draw_bold_captions(frame: Image.Image, words: list[dict], t: float) -> Image.Image:
+    """Render GithubSignals-style bold uppercase captions with yellow active-word pill."""
+    if not words:
+        return frame
+    active_idx = -1
+    for i, w in enumerate(words):
+        if w["start"] <= t <= w["end"] + 0.15:
+            active_idx = i
+            break
+    if active_idx == -1:
+        for i, w in enumerate(words):
+            if w["start"] <= t:
+                active_idx = i
+    if active_idx == -1:
+        return frame
+
+    chunk_start = (active_idx // 3) * 3
+    chunk = words[chunk_start : chunk_start + 3]
+    draw = ImageDraw.Draw(frame)
+    font = load_font(62, bold=True)
+
+    gap = 20
+    widths = [draw.textbbox((0, 0), c["text"], font=font)[2] for c in chunk]
+    total_w = sum(widths) + gap * (len(chunk) - 1)
+    x = (WIDTH - total_w) // 2
+    y = 1340
+
+    for idx, item in enumerate(chunk):
+        is_active = (chunk_start + idx) == active_idx
+        w_text = item["text"]
+        tw = widths[idx]
+        if is_active:
+            draw.rounded_rectangle([x - 16, y - 10, x + tw + 16, y + 74], radius=16, fill=(250, 204, 21))
+            draw.text((x, y), w_text, font=font, fill=(11, 15, 23))
+        else:
+            draw.text((x, y), w_text, font=font, fill=TEXT_PRIMARY, stroke_width=6, stroke_fill=(0, 0, 0))
+        x += tw + gap
+    return frame
+
+
 def render_reel(
     repo_url: str,
     tag: str,
@@ -179,10 +242,15 @@ def render_reel(
     duration: int = 18,
     fps: int = 30,
     audio_path: Path | None = None,
+    script: str | None = None,
+    voice: str = "en-US-ChristopherNeural",
+    rate: str = "+5%",
+    pitch: str = "-8Hz",
 ) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as tmpdir:
-        shot_path = Path(tmpdir) / "repo.png"
+        tmp = Path(tmpdir)
+        shot_path = tmp / "repo.png"
         capture_repo_screenshot(repo_url, shot_path, capture_width=WIN_W)
 
         repo_img = Image.open(shot_path).convert("RGB")
@@ -193,50 +261,46 @@ def render_reel(
         max_scroll = max(0, repo_img.height - VIEWPORT_H)
         base_frame = build_base_frame(repo_url, tag, hook)
 
+        words: list[dict] = []
+        final_audio: Path | None = audio_path
+        if script:
+            voice_mp3 = tmp / "voice.mp3"
+            dur, words = asyncio.run(synth_narration(script, voice_mp3, voice, rate, pitch))
+            duration = max(12, math.ceil(dur + 0.8))
+            if audio_path and audio_path.exists():
+                mixed_mp3 = tmp / "mixed.mp3"
+                subprocess.run(
+                    [
+                        "ffmpeg", "-y", "-i", str(voice_mp3), "-stream_loop", "-1", "-i", str(audio_path),
+                        "-filter_complex", "[1:a]volume=-24dB[bg];[0:a][bg]amix=inputs=2:duration=first:dropout_transition=2[out]",
+                        "-map", "[out]", "-t", f"{duration:.2f}", "-c:a", "libmp3lame", "-b:a", "192k", str(mixed_mp3),
+                    ],
+                    check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                )
+                final_audio = mixed_mp3
+            else:
+                final_audio = voice_mp3
+
         cmd = [
-            "ffmpeg",
-            "-y",
-            "-f",
-            "rawvideo",
-            "-vcodec",
-            "rawvideo",
-            "-pix_fmt",
-            "rgb24",
-            "-s",
-            f"{WIDTH}x{HEIGHT}",
-            "-r",
-            str(fps),
-            "-i",
-            "-",
+            "ffmpeg", "-y", "-f", "rawvideo", "-vcodec", "rawvideo", "-pix_fmt", "rgb24",
+            "-s", f"{WIDTH}x{HEIGHT}", "-r", str(fps), "-i", "-",
         ]
-        if audio_path and audio_path.exists():
-            fade_out_start = max(0.5, duration - 1.5)
-            cmd.extend([
-                "-i",
-                str(audio_path),
-                "-af",
-                f"afade=t=in:st=0:d=0.5,afade=t=out:st={fade_out_start:.2f}:d=1.5",
-                "-c:a",
-                "aac",
-                "-b:a",
-                "192k",
-                "-shortest",
-            ])
+        if final_audio and final_audio.exists():
+            if script:
+                cmd.extend(["-i", str(final_audio), "-c:a", "aac", "-b:a", "192k", "-shortest"])
+            else:
+                fade_out_start = max(0.5, duration - 1.5)
+                cmd.extend([
+                    "-i", str(final_audio),
+                    "-af", f"afade=t=in:st=0:d=0.5,afade=t=out:st={fade_out_start:.2f}:d=1.5",
+                    "-c:a", "aac", "-b:a", "192k", "-shortest",
+                ])
         cmd.extend([
-            "-c:v",
-            "libx264",
-            "-pix_fmt",
-            "yuv420p",
-            "-preset",
-            "medium",
-            "-crf",
-            "18",
-            "-movflags",
-            "+faststart",
-            str(out_path),
+            "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "medium", "-crf", "18",
+            "-movflags", "+faststart", str(out_path),
         ])
 
-        ffmpeg_log = Path(tmpdir) / "ffmpeg.log"
+        ffmpeg_log = tmp / "ffmpeg.log"
         with ffmpeg_log.open("w", encoding="utf-8") as log_f:
             proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=log_f)
             assert proc.stdin is not None
@@ -258,6 +322,8 @@ def render_reel(
                 crop = repo_img.crop((0, scroll_y, WIN_W, scroll_y + VIEWPORT_H))
                 frame = base_frame.copy()
                 frame.paste(crop, (WIN_X, WIN_Y + TITLEBAR_H))
+                if words:
+                    frame = draw_bold_captions(frame, words, frame_idx / fps)
                 proc.stdin.write(frame.tobytes())
 
             proc.stdin.close()
@@ -276,6 +342,9 @@ def main() -> None:
     parser.add_argument("--duration", type=int, default=18, help="Duration in seconds")
     parser.add_argument("--fps", type=int, default=30, help="Frames per second")
     parser.add_argument("--audio", help="Optional background audio file (.mp3/.wav)")
+    parser.add_argument("--script", help="Optional voiceover script (enables deep TTS + bold kinetic captions)")
+    parser.add_argument("--voice", default="en-US-ChristopherNeural", help="Edge TTS voice for --script")
+    parser.add_argument("--pitch", default="-8Hz", help="TTS pitch offset")
     parser.add_argument("--batch", help="Path to JSON batch file")
     args = parser.parse_args()
 
@@ -294,6 +363,9 @@ def main() -> None:
                 duration=int(item.get("duration", args.duration)),
                 fps=args.fps,
                 audio_path=audio,
+                script=item.get("script"),
+                voice=args.voice,
+                pitch=args.pitch,
             )
             print(f"Done: {out_path}")
         return
@@ -309,6 +381,9 @@ def main() -> None:
         duration=args.duration,
         fps=args.fps,
         audio_path=audio,
+        script=args.script,
+        voice=args.voice,
+        pitch=args.pitch,
     )
     print(f"Done: {args.out}")
 
