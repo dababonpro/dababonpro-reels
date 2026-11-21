@@ -15,6 +15,9 @@ import edge_tts
 from PIL import Image, ImageDraw, ImageFont
 from playwright.sync_api import sync_playwright
 
+from elevenlabs_tts import synth_elevenlabs_tts
+from publish_reel import load_env
+
 WIDTH = 1080
 HEIGHT = 1920
 BG_COLOR = (11, 15, 23)
@@ -271,6 +274,7 @@ def render_reel(
     rate: str = "+5%",
     pitch: str = "-8Hz",
     badge_path: Path | None = None,
+    tts_engine: str = "edge",
 ) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -290,7 +294,11 @@ def render_reel(
         final_audio: Path | None = audio_path
         if script:
             voice_mp3 = tmp / "voice.mp3"
-            dur, words = asyncio.run(synth_narration(script, voice_mp3, voice, rate, pitch))
+            if tts_engine == "elevenlabs":
+                load_env(Path(__file__).resolve().parent.parent / ".env")
+                dur, words = synth_elevenlabs_tts(script, voice_mp3)
+            else:
+                dur, words = asyncio.run(synth_narration(script, voice_mp3, voice, rate, pitch))
             duration = max(12, math.ceil(dur + 0.8))
             if audio_path and audio_path.exists():
                 mixed_mp3 = tmp / "mixed.mp3"
@@ -372,6 +380,7 @@ def main() -> None:
     parser.add_argument("--script", help="Optional voiceover script (enables deep TTS + bold kinetic captions)")
     parser.add_argument("--voice", default="en-US-ChristopherNeural", help="Edge TTS voice for --script")
     parser.add_argument("--pitch", default="-8Hz", help="TTS pitch offset")
+    parser.add_argument("--tts", default="edge", choices=["edge", "elevenlabs"], help="TTS engine for --script")
     parser.add_argument("--badge", help="Optional circular mascot image path")
     parser.add_argument("--batch", help="Path to JSON batch file")
     args = parser.parse_args()
@@ -413,6 +422,7 @@ def main() -> None:
         voice=args.voice,
         pitch=args.pitch,
         badge_path=Path(args.badge) if args.badge else None,
+        tts_engine=args.tts,
     )
     print(f"Done: {args.out}")
 
