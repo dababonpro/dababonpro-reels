@@ -18,10 +18,14 @@ Use this skill to research topics, generate 9:16 vertical videos, and publish or
 
 ## Procedure
 
-1. **Pick & Validate Repos**
+1. **Draft & Review Scripts First (Before Rendering)**
+   - For explainer or story series, draft all scripts in a single Markdown doc first (e.g., `content/explainers/SERIES_SCRIPTS.md`) before generating TTS or MP4s to save render/token cost.
+   - Use simple everyday analogies, a consistent mental model (model generates text; tools/instructions let an assistant search or act), and one short spoken CTA + on-screen series badge.
+   - **Editorial accuracy gate:** Remove absolute claims (*"always"*, *"every time"*, *"stops all errors"*), qualify limits honestly, and check 25–30s spoken pacing before converting to storyboards.
+2. **Pick & Validate Repos (for Repo Spotlights)**
    - Verify each GitHub URL returns HTTP 200 before rendering (`generate_repo_reel.py` enforces this automatically).
    - Write a `< 60` char hook focused on a frustration or concrete utility (*"Stop fighting..."* / *"Turn any X into Y"*).
-2. **Render 9:16 Videos**
+3. **Render 9:16 Videos**
    - Single video:
      ```powershell
      python scripts/generate_repo_reel.py --repo <url> --tag "<Category • Open Source>" --hook "<Hook>" --audio assets/audio/synth_tech_loop.mp3 --out out/<slug>.mp4
@@ -30,11 +34,11 @@ Use this skill to research topics, generate 9:16 vertical videos, and publish or
      ```powershell
      python scripts/generate_repo_reel.py --batch content/week-01-batch.json --audio assets/audio/synth_tech_loop.mp3
      ```
-3. **Verify Before Publishing (Required Gate)**
+4. **Verify Before Publishing (Required Gate)**
    - Run `python scripts/verify_reel.py out/*.mp4` to confirm `1080x1920`, `h264`/`yuv420p`, duration `8–60s`, and non-silent audio (`> -60 dB`).
-4. **Publish / Schedule**
+5. **Publish / Schedule**
    - **Facebook:** `python scripts/publish_reel.py --video <mp4> --caption "<caption>" [--schedule <unix_ts>]`
    - **YouTube Shorts:** `python scripts/publish_youtube.py --video <mp4> --title "<Title> #Shorts" --description "<desc>" --privacy public` (or `--privacy private --publish-at <ISO-UTC>`)
    - **TikTok:** Upload manually via `tiktok.com/tiktokstudio/upload` (leave Location blank, keep High-quality uploads ON, AI-generated content OFF for real repo captures).
-4. **Measure & Iterate**
+6. **Measure & Iterate**
    - Review **Viewed vs. Swiped Away %** (`> 65%`), **Avg % Viewed** (`> 85%`), and **Saves / Likes** (`> 2x`) per [STRATEGY.md](../../STRATEGY.md).
