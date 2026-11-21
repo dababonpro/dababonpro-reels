@@ -1,40 +1,51 @@
 # DababonPro Reels Studio
 
-Automated content production & strategy kit for **DababonPro** AI educational Reels (Facebook Reels, Instagram Reels, YouTube Shorts, LinkedIn, TikTok).
+Automated 9:16 AI educational Reels & Shorts pipeline, brand kit, and reusable AI agent skill (`skills/dababonpro-reels/SKILL.md`) for **Facebook Reels**, **YouTube Shorts**, and **TikTok**.
 
-## 1. Recommended Page Bio (Facebook & Instagram)
-
-Replace the pure agency bio with one that bridges **AI education** and **DababonPro IT Solutions**:
-
-> Practical AI tools, open-source workflows, and systems engineering — by DababonPro IT Solutions.
-
-## 2. Weekly Content Cadence (5 Reels / Week)
-
-- **Mon / Wed / Fri — GitHub Repo Spotlight (18–22s):** High-save format. Dark-mode repo card, 1-line hook, smooth scroll over README/demo, native trending audio or lo-fi track.
-- **Tue — Tool-in-Action Story (30–45s):** Real problem solved end-to-end (screen recording or workflow walkthrough).
-- **Thu — Concept Explainer (30–45s):** Character/slide explainer (*MCP vs. APIs*, *When to use agents vs. scripts*).
-
-## 3. Generate a Repo Spotlight Reel
-
-Requires Python 3.11+, `playwright`, `pillow`, and `ffmpeg`.
+## Quickstart
 
 ```powershell
-python scripts/generate_repo_reel.py `
-  --repo https://github.com/mendableai/firecrawl `
-  --hook "Turn any website into clean LLM-ready Markdown" `
-  --tag "AI Infrastructure • Open Source" `
-  --out out/01_firecrawl.mp4
+git clone https://github.com/dababonpro/dababonpro-reels.git
+cd dababonpro-reels
+pip install -r requirements.txt
+playwright install chromium
 ```
 
-Optional flags:
-- `--audio path/to/track.mp3` — mix background music with fade-out.
-- `--duration 18` — video length in seconds (default `18`).
-- `--fps 30` — frame rate (default `30`).
-- `--batch content/week-01-batch.json` — render all repo reels in a batch file.
+Or with Docker:
 
-## 4. Cross-Posting Checklist
+```bash
+docker build -t dababonpro-reels .
+docker run --rm -v "$(pwd)/out:/app/out" dababonpro-reels scripts/generate_story_reel.py \
+  --storyboard content/showcase-agent-pipeline.json \
+  --out out/08_agent_pipeline_showcase.mp4
+```
 
-1. **Facebook + Instagram:** Schedule together in **Meta Business Suite** (add native trending audio if rendered silent).
-2. **YouTube Shorts:** Upload the same `1080x1920` `.mp4` with `#Shorts` and the repo link in the description/pinned comment.
-3. **LinkedIn:** Post natively with a 3-line business-outcome caption (who this saves time/money for).
-4. **TikTok:** Upload with the same hook as on-screen text for search indexing.
+## Generate Videos
+
+### Format A — GitHub Repo Spotlight (Scroll + Synth Audio)
+```powershell
+python scripts/generate_repo_reel.py `
+  --repo https://github.com/firecrawl/firecrawl `
+  --hook "Turn any website into clean LLM-ready Markdown" `
+  --tag "AI Infrastructure • Open Source" `
+  --audio assets/audio/synth_tech_loop.mp3 `
+  --out out/01_firecrawl_audio.mp4
+```
+
+### Format B — Dynamic Story Reel (Neural TTS + Kinetic Captions)
+```powershell
+python scripts/generate_story_reel.py `
+  --storyboard content/showcase-agent-pipeline.json `
+  --out out/08_agent_pipeline_showcase.mp4
+```
+
+### Verify Before Publishing
+```powershell
+python scripts/verify_reel.py out/*.mp4
+```
+
+## Publish & Docs
+
+- **Setup & API Credentials:** [docs/GUIDE.md](docs/GUIDE.md)
+- **Content Strategy & KPIs:** [STRATEGY.md](STRATEGY.md)
+- **AI Agent Skill:** [skills/dababonpro-reels/SKILL.md](skills/dababonpro-reels/SKILL.md)
