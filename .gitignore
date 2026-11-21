@@ -2,6 +2,7 @@
 client_secrets.json
 yt_client_secrets.json
 youtube_token.json
+private/
 out/
 __pycache__/
 *.pyc

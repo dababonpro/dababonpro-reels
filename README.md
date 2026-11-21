@@ -18,7 +18,7 @@ Or with Docker (includes Python, `ffmpeg`, fonts, and Chromium):
 ```powershell
 docker build -t dababonpro-reels .
 # PowerShell:
-docker run --rm -v "${PWD}/out:/app/out" dababonpro-reels scripts/generate_story_reel.py --storyboard content/showcase-agent-pipeline.json --out out/08_agent_pipeline_showcase.mp4
+docker run --rm -v "${PWD}/out:/app/out" dababonpro-reels scripts/generate_story_reel.py --storyboard content/examples/sample-story.json --out out/sample_story.mp4
 ```
 
 *(On Linux/macOS bash, use `"$(pwd)/out:/app/out"`.)*
@@ -38,8 +38,8 @@ python scripts/generate_repo_reel.py `
 ### Format B — Dynamic Story Reel (Neural TTS + Kinetic Captions)
 ```powershell
 python scripts/generate_story_reel.py `
-  --storyboard content/showcase-agent-pipeline.json `
-  --out out/08_agent_pipeline_showcase.mp4
+  --storyboard content/examples/sample-story.json `
+  --out out/sample_story.mp4
 ```
 
 ### Verify Before Publishing

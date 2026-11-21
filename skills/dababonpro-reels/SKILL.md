@@ -19,7 +19,7 @@ Use this skill to research topics, generate 9:16 vertical videos, and publish or
 ## Procedure
 
 1. **Draft & Review Scripts First (Before Rendering)**
-   - For explainer or story series, draft all scripts in a single Markdown doc first (e.g., `content/explainers/SERIES_SCRIPTS.md`) before generating TTS or MP4s to save render/token cost.
+   - For explainer or story series, draft all scripts in a single Markdown doc inside `private/` first (e.g., `private/content/SERIES_SCRIPTS.md`, gitignored) before generating TTS or MP4s to save render/token cost.
    - Use simple everyday analogies, a consistent mental model (model generates text; tools/instructions let an assistant search or act), and one short spoken CTA + on-screen series badge.
    - **Editorial accuracy gate:** Remove absolute claims (*"always"*, *"every time"*, *"stops all errors"*), qualify limits honestly, and check 25–30s spoken pacing before converting to storyboards.
 2. **Pick & Validate Repos (for Repo Spotlights)**
@@ -32,7 +32,7 @@ Use this skill to research topics, generate 9:16 vertical videos, and publish or
      ```
    - Batch:
      ```powershell
-     python scripts/generate_repo_reel.py --batch content/week-01-batch.json --audio assets/audio/synth_tech_loop.mp3
+     python scripts/generate_repo_reel.py --batch content/examples/sample-repo-batch.json --audio assets/audio/synth_tech_loop.mp3
      ```
 4. **Verify Before Publishing (Required Gate)**
    - Run `python scripts/verify_reel.py out/*.mp4` to confirm `1080x1920`, `h264`/`yuv420p`, duration `8–60s`, and non-silent audio (`> -60 dB`).

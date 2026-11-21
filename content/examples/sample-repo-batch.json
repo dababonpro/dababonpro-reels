@@ -1,0 +1,10 @@
+[
+  {
+    "id": "01_sample_repo",
+    "repo": "https://github.com/firecrawl/firecrawl",
+    "tag": "AI Infrastructure • Open Source",
+    "hook": "Turn any website into clean LLM-ready Markdown",
+    "duration": 18,
+    "out": "out/01_sample_repo.mp4"
+  }
+]

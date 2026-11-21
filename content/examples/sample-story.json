@@ -1,0 +1,16 @@
+[
+  {
+    "tag": "AI Explained • Example",
+    "headline": "What an LLM actually does",
+    "window_title": "explainer — example",
+    "narration": "Think of an LLM like your phone's autocomplete, trained on huge amounts of text to predict one small chunk at a time.",
+    "terminal": [
+      "# Input:",
+      "$ \"The server crashed because\"",
+      "",
+      "[ Transformer Model ] -> \"of\" / \"memory\"",
+      "",
+      "[ok] Pair with tools & checks for real work."
+    ]
+  }
+]
