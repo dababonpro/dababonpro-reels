@@ -1,0 +1,9 @@
+.git
+.env
+client_secrets.json
+yt_client_secrets.json
+youtube_token.json
+out/
+*.mp4
+__pycache__/
+*.pyc

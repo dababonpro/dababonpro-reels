@@ -4,6 +4,8 @@ Automated 9:16 AI educational Reels & Shorts pipeline, brand kit, and reusable A
 
 ## Quickstart
 
+**Prerequisites (native):** Python 3.11+ and `ffmpeg` on `PATH` (e.g. `winget install Gyan.FFmpeg`, `brew install ffmpeg`, or `apt install ffmpeg`).
+
 ```powershell
 git clone https://github.com/dababonpro/dababonpro-reels.git
 cd dababonpro-reels
@@ -11,14 +13,15 @@ pip install -r requirements.txt
 playwright install chromium
 ```
 
-Or with Docker:
+Or with Docker (includes Python, `ffmpeg`, fonts, and Chromium):
 
-```bash
+```powershell
 docker build -t dababonpro-reels .
-docker run --rm -v "$(pwd)/out:/app/out" dababonpro-reels scripts/generate_story_reel.py \
-  --storyboard content/showcase-agent-pipeline.json \
-  --out out/08_agent_pipeline_showcase.mp4
+# PowerShell:
+docker run --rm -v "${PWD}/out:/app/out" dababonpro-reels scripts/generate_story_reel.py --storyboard content/showcase-agent-pipeline.json --out out/08_agent_pipeline_showcase.mp4
 ```
+
+*(On Linux/macOS bash, use `"$(pwd)/out:/app/out"`.)*
 
 ## Generate Videos
 
