@@ -1,11 +1,11 @@
 [
   {
     "tag": "AI Agent Pipeline • Showcase",
-    "headline": "1 prompt built my 3-platform Shorts engine",
+    "headline": "1 AI session built my 3-platform Shorts engine",
     "window_title": "dababonpro-reels — pipeline",
-    "narration": "I gave my AI coding agent one goal: build, brand, and publish a three-platform Reels pipeline.",
+    "narration": "In one AI coding session, we built, branded, and published a three-platform Reels pipeline.",
     "terminal": [
-      "$ antigravity --goal \"build DababonPro Reels\"",
+      "$ antigravity  # 1 session -> full pipeline",
       "",
       "# Target platforms:",
       "  [ok] Facebook Reels  (Meta Graph API)",
