@@ -1,0 +1,52 @@
+[
+  {
+    "id": "01_firecrawl",
+    "day": "Monday",
+    "format": "GitHub Repo Spotlight",
+    "repo": "https://github.com/firecrawl/firecrawl",
+    "tag": "AI Infrastructure • Open Source",
+    "hook": "Turn any website into clean LLM-ready Markdown",
+    "duration": 18,
+    "out": "out/01_firecrawl.mp4"
+  },
+  {
+    "id": "02_openhands",
+    "day": "Wednesday",
+    "format": "GitHub Repo Spotlight",
+    "repo": "https://github.com/All-Hands-AI/OpenHands",
+    "tag": "Coding Agent • Open Source",
+    "hook": "An open-source AI software engineer in a sandbox",
+    "duration": 20,
+    "out": "out/02_openhands.mp4"
+  },
+  {
+    "id": "03_aider",
+    "day": "Friday",
+    "format": "GitHub Repo Spotlight",
+    "repo": "https://github.com/Aider-AI/aider",
+    "tag": "Terminal Dev Tool • Open Source",
+    "hook": "AI pair programming right inside your Git terminal",
+    "duration": 18,
+    "out": "out/03_aider.mp4"
+  },
+  {
+    "id": "04_smolagents",
+    "day": "Saturday",
+    "format": "GitHub Repo Spotlight",
+    "repo": "https://github.com/huggingface/smolagents",
+    "tag": "Agent Framework • Hugging Face",
+    "hook": "Build code-writing AI agents in ~1,000 lines",
+    "duration": 18,
+    "out": "out/04_smolagents.mp4"
+  },
+  {
+    "id": "05_baml",
+    "day": "Sunday",
+    "format": "GitHub Repo Spotlight",
+    "repo": "https://github.com/BoundaryML/baml",
+    "tag": "LLM Reliability • Open Source",
+    "hook": "Stop fighting broken JSON outputs from LLMs",
+    "duration": 18,
+    "out": "out/05_baml.mp4"
+  }
+]

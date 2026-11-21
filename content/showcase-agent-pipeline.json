@@ -1,0 +1,75 @@
+[
+  {
+    "tag": "AI Agent Pipeline • Showcase",
+    "headline": "1 prompt built my 3-platform Shorts engine",
+    "window_title": "dababonpro-reels — pipeline",
+    "narration": "I gave my AI coding agent one goal: build, brand, and publish a three-platform Reels pipeline.",
+    "terminal": [
+      "$ antigravity --goal \"build DababonPro Reels\"",
+      "",
+      "# Target platforms:",
+      "  [ok] Facebook Reels  (Meta Graph API)",
+      "  [ok] YouTube Shorts  (YouTube Data API v3)",
+      "  [ok] TikTok          (1080x1920 vertical)",
+      "",
+      "# Status: Scaffolding scripts..."
+    ]
+  },
+  {
+    "tag": "Step 1 • Brand Kit",
+    "headline": "Auto-generated matching brand assets",
+    "window_title": "scripts/generate_brand_assets.py",
+    "narration": "First, it rendered crisp dark-mode profile, banner, and watermark PNGs sized for every platform.",
+    "image": "assets/profile.png"
+  },
+  {
+    "tag": "Step 2 • Video Engine",
+    "headline": "Playwright + FFmpeg 9:16 renderer",
+    "window_title": "scripts/generate_repo_reel.py",
+    "narration": "Next, it wrote a Playwright and FFmpeg renderer that turns any GitHub repo into a smooth vertical Reel with synth audio.",
+    "terminal": [
+      "$ python scripts/generate_repo_reel.py \\",
+      "    --batch content/week-01-batch.json \\",
+      "    --audio assets/audio/synth_tech_loop.mp3",
+      "",
+      "[ok] Rendered 01_firecrawl_audio.mp4 (1080x1920)",
+      "[ok] Rendered 02_openhands_audio.mp4 (1080x1920)",
+      "[ok] Rendered 03_aider_audio.mp4     (1080x1920)",
+      "[ok] Rendered 04_smolagents_audio.mp4",
+      "[ok] Rendered 05_baml_audio.mp4"
+    ]
+  },
+  {
+    "tag": "Step 3 • Auto-Publish",
+    "headline": "Scheduled a full week via API",
+    "window_title": "publish_reel.py + publish_youtube.py",
+    "narration": "Then it connected Meta Graph API and YouTube OAuth to publish today's launch batch and schedule all of next week.",
+    "terminal": [
+      "$ python scripts/schedule_week1_remaining.py",
+      "[ok] FB 02_openhands -> Mon 09:00 SGT",
+      "[ok] FB 03_aider     -> Wed 09:00 SGT",
+      "[ok] FB 04_smolagents-> Fri 09:00 SGT",
+      "[ok] FB 05_baml      -> Sat 09:00 SGT",
+      "",
+      "$ python scripts/sync_youtube_week1.py",
+      "[ok] 3 Public Shorts + 4 Scheduled Shorts live"
+    ]
+  },
+  {
+    "tag": "Open Source • Save This",
+    "headline": "Steal the exact AI skill to run it yourself",
+    "window_title": "skills/dababonpro-reels/SKILL.md",
+    "narration": "We packaged the entire workflow into a reusable AI skill. Follow DababonPro and save this for your next build.",
+    "terminal": [
+      "dababonpro-reels/",
+      "├── skills/dababonpro-reels/SKILL.md",
+      "├── docs/GUIDE.md",
+      "├── STRATEGY.md",
+      "└── scripts/",
+      "    ├── generate_repo_reel.py",
+      "    ├── generate_story_reel.py",
+      "    ├── publish_reel.py",
+      "    └── publish_youtube.py"
+    ]
+  }
+]
