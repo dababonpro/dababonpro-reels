@@ -1,0 +1,69 @@
+[
+  {
+    "tag": "AI Fundamentals • 01",
+    "headline": "What an LLM actually does under the hood",
+    "window_title": "explainer — 01-llms.md",
+    "narration": "An LLM does not think or look up facts. At its core, it is a next-token prediction engine trained on trillions of words.",
+    "terminal": [
+      "# Input tokens:",
+      "$ \"The server crashed because\"",
+      "",
+      "+------------------------------+",
+      "|   Transformer Neural Net     |",
+      "|  (Attention + Weights)       |",
+      "+------------------------------+",
+      "        |",
+      "        v",
+      "[ok] Next token probabilities:",
+      "  \"of\" (64%) | \"memory\" (21%)"
+    ]
+  },
+  {
+    "tag": "How It Works",
+    "headline": "Attention connects every word in context",
+    "window_title": "explainer — attention",
+    "narration": "Self-attention lets the model weigh which earlier words matter most right now, across code, docs, or chat history.",
+    "terminal": [
+      "# Context Window (e.g. 200K tokens)",
+      "",
+      "[System Rules] ---> (high weight)",
+      "[Error Stack ] ---> (high weight)",
+      "[Old Chat    ] ---> (low weight)",
+      "",
+      "[ok] Output depends on what stays",
+      "     inside the active window."
+    ]
+  },
+  {
+    "tag": "The Catch",
+    "headline": "Why raw LLMs still hallucinate",
+    "window_title": "explainer — limits",
+    "narration": "Because weights are frozen at training time, a raw LLM has no live memory and no access to your private database.",
+    "terminal": [
+      "# Raw LLM Limits:",
+      "",
+      "  [x] Frozen training cutoff",
+      "  [x] No private company data",
+      "  [x] No real-world tools",
+      "",
+      "# Fix: pair the LLM with RAG,",
+      "# MCP, and a solid harness."
+    ]
+  },
+  {
+    "tag": "Save This Series",
+    "headline": "Follow for RAG, MCP & Context Engineering",
+    "window_title": "dababonpro — ai-series",
+    "narration": "Next up in this series: RAG, MCP, and Context Engineering. Save this and follow DababonPro.",
+    "terminal": [
+      "# AI Engineering Series:",
+      "",
+      "  [ok] 01. LLMs",
+      "  [->] 02. RAG",
+      "  [  ] 03. MCP",
+      "  [  ] 04. Context Engineering",
+      "  [  ] 05. Harness Engineering",
+      "  [  ] 06. Graph Engineering"
+    ]
+  }
+]

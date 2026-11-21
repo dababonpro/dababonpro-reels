@@ -73,9 +73,9 @@ def wrap_text(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.ImageFont, m
     return lines
 
 
-async def synth_scene_tts(text: str, out_mp3: Path, voice: str, rate: str) -> tuple[float, list[dict]]:
+async def synth_scene_tts(text: str, out_mp3: Path, voice: str, rate: str, pitch: str) -> tuple[float, list[dict]]:
     """Synthesize speech and return (duration_sec, word_timings)."""
-    communicate = edge_tts.Communicate(text, voice=voice, rate=rate, boundary="WordBoundary")
+    communicate = edge_tts.Communicate(text, voice=voice, rate=rate, pitch=pitch, boundary="WordBoundary")
     words: list[dict] = []
     audio_chunks = bytearray()
     async for chunk in communicate.stream():
@@ -83,7 +83,7 @@ async def synth_scene_tts(text: str, out_mp3: Path, voice: str, rate: str) -> tu
             audio_chunks.extend(chunk["data"])
         elif chunk["type"] == "WordBoundary":
             words.append({
-                "text": chunk["text"],
+                "text": chunk["text"].upper(),
                 "start": chunk["offset"] / 10_000_000.0,
                 "end": (chunk["offset"] + chunk["duration"]) / 10_000_000.0,
             })
@@ -171,25 +171,27 @@ def draw_kinetic_caption(frame: Image.Image, words: list[dict], local_t: float) 
     if active_idx == -1:
         return frame
 
-    chunk_start = (active_idx // 4) * 4
-    chunk = words[chunk_start : chunk_start + 4]
+    chunk_start = (active_idx // 3) * 3
+    chunk = words[chunk_start : chunk_start + 3]
     draw = ImageDraw.Draw(frame)
-    font = load_font(54, bold=True)
+    font = load_font(60, bold=True)
 
-    # Measure total width
-    gap = 18
+    gap = 20
     widths = [draw.textbbox((0, 0), c["text"], font=font)[2] for c in chunk]
     total_w = sum(widths) + gap * (len(chunk) - 1)
     x = (WIDTH - total_w) // 2
-    y = 1520
+    y = 1500
 
-    # Backdrop pill
-    draw.rounded_rectangle([x - 28, y - 18, x + total_w + 28, y + 74], radius=20, fill=(7, 11, 18))
     for idx, item in enumerate(chunk):
         is_active = (chunk_start + idx) == active_idx
-        col = ACCENT if is_active else TEXT_PRIMARY
-        draw.text((x, y), item["text"], font=font, fill=col)
-        x += widths[idx] + gap
+        w_text = item["text"]
+        tw = widths[idx]
+        if is_active:
+            draw.rounded_rectangle([x - 16, y - 10, x + tw + 16, y + 72], radius=16, fill=(250, 204, 21))
+            draw.text((x, y), w_text, font=font, fill=(11, 15, 23))
+        else:
+            draw.text((x, y), w_text, font=font, fill=TEXT_PRIMARY, stroke_width=6, stroke_fill=(0, 0, 0))
+        x += tw + gap
     return frame
 
 
@@ -197,8 +199,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Generate Format B Story Reel with TTS + kinetic captions.")
     parser.add_argument("--storyboard", required=True, help="Path to storyboard JSON")
     parser.add_argument("--out", required=True, help="Output MP4 path")
-    parser.add_argument("--voice", default="en-US-GuyNeural", help="Edge TTS voice")
-    parser.add_argument("--rate", default="+10%", help="TTS speech rate")
+    parser.add_argument("--voice", default="en-US-ChristopherNeural", help="Edge TTS voice")
+    parser.add_argument("--rate", default="+6%", help="TTS speech rate")
+    parser.add_argument("--pitch", default="-8Hz", help="TTS pitch offset")
     parser.add_argument("--fps", type=int, default=30)
     args = parser.parse_args()
 
@@ -217,7 +220,7 @@ def main() -> None:
             lines = []
             for idx, sc in enumerate(scenes):
                 mp3 = tmp / f"sc_{idx:02d}.mp3"
-                dur, words = await synth_scene_tts(sc["narration"], mp3, args.voice, args.rate)
+                dur, words = await synth_scene_tts(sc["narration"], mp3, args.voice, args.rate, args.pitch)
                 pad = 0.25
                 padded_mp3 = tmp / f"sc_{idx:02d}_pad.mp3"
                 subprocess.run(

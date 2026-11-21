@@ -1,0 +1,64 @@
+[
+  {
+    "tag": "AI Fundamentals • 04",
+    "headline": "Prompt Engineering is dead. Context Engineering won.",
+    "window_title": "explainer — 04-context.md",
+    "narration": "Clever one-line prompts do not fix failing agents. Context engineering is designing the exact system of info the model sees at every step.",
+    "terminal": [
+      "# Prompt Engineering:",
+      "  \"Act as a senior dev and fix it.\"",
+      "",
+      "# Context Engineering:",
+      "  [1] System rules + constraints",
+      "  [2] Relevant repo files only",
+      "  [3] Recent tool errors + state",
+      "  [4] Compacted memory"
+    ]
+  },
+  {
+    "tag": "The 4 Levers",
+    "headline": "Write, Select, Compress, and Isolate",
+    "window_title": "context — 4-levers",
+    "narration": "Great agent builders use four levers: write memory to files, select only relevant snippets, compress long logs, and isolate sub-tasks.",
+    "terminal": [
+      "  1. WRITE    -> save state to disk",
+      "  2. SELECT   -> grep before read",
+      "  3. COMPRESS -> summarize old turns",
+      "  4. ISOLATE  -> subagents per task",
+      "",
+      "[ok] Less noise = fewer bugs",
+      "     and 50% lower token cost."
+    ]
+  },
+  {
+    "tag": "The Rule",
+    "headline": "More tokens in context makes models dumber",
+    "window_title": "context — signal-vs-noise",
+    "narration": "Dumping an entire codebase into the window causes context rot. Keep only high-signal lines in view and your accuracy jumps.",
+    "terminal": [
+      "# Context Rot:",
+      "  180K tokens of junk -> misses bug",
+      "",
+      "# High-Signal Context:",
+      "  12K targeted tokens -> nails fix",
+      "",
+      "[ok] Curate context like RAM."
+    ]
+  },
+  {
+    "tag": "Save This Series",
+    "headline": "Next: Harness Engineering",
+    "window_title": "dababonpro — ai-series",
+    "narration": "Save this cheat sheet and follow DababonPro for part five on Harness Engineering.",
+    "terminal": [
+      "# AI Engineering Series:",
+      "",
+      "  [ok] 01. LLMs",
+      "  [ok] 02. RAG",
+      "  [ok] 03. MCP",
+      "  [ok] 04. Context Engineering",
+      "  [->] 05. Harness Engineering",
+      "  [  ] 06. Graph Engineering"
+    ]
+  }
+]

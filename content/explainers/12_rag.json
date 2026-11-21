@@ -1,0 +1,64 @@
+[
+  {
+    "tag": "AI Fundamentals • 02",
+    "headline": "Why your AI makes up answers (and how RAG fixes it)",
+    "window_title": "explainer — 02-rag.md",
+    "narration": "When an LLM does not know your company docs, it guesses. Retrieval-Augmented Generation fixes that by fetching real facts first.",
+    "terminal": [
+      "# Without RAG:",
+      "User -> [ LLM ] -> Guessed answer",
+      "",
+      "# With RAG:",
+      "User -> [ Search Docs ] -> [ LLM ]",
+      "",
+      "[ok] Grounded in your actual data."
+    ]
+  },
+  {
+    "tag": "Step 1 • Index",
+    "headline": "Chunk your docs and store embeddings",
+    "window_title": "rag — indexing",
+    "narration": "First, you split PDFs, wikis, or code into small chunks, convert them into vectors, and store them in a database.",
+    "terminal": [
+      "[Docs / PDFs / Code]",
+      "        |",
+      "        v  (Split into chunks)",
+      "[500-token chunks]",
+      "        |",
+      "        v  (Embedding model)",
+      "[Vector DB: pgvector / Qdrant]"
+    ]
+  },
+  {
+    "tag": "Step 2 • Retrieve & Generate",
+    "headline": "Inject only the top matching chunks",
+    "window_title": "rag — query-time",
+    "narration": "At query time, you retrieve only the top matching chunks and inject them into the prompt so the model cites real sources.",
+    "terminal": [
+      "$ query: \"What is our refund SLA?\"",
+      "",
+      "[ok] Top 3 chunks retrieved (0.04s)",
+      "[ok] Injected into LLM prompt",
+      "[ok] Answer cites policy.md #L42",
+      "",
+      "# Bad chunks = bad answers.",
+      "# Retrieval quality is 80% of RAG."
+    ]
+  },
+  {
+    "tag": "Save This Series",
+    "headline": "Next: MCP, the USB-C port for AI tools",
+    "window_title": "dababonpro — ai-series",
+    "narration": "Save this for your next RAG build, and follow DababonPro for part three on MCP.",
+    "terminal": [
+      "# AI Engineering Series:",
+      "",
+      "  [ok] 01. LLMs",
+      "  [ok] 02. RAG",
+      "  [->] 03. MCP",
+      "  [  ] 04. Context Engineering",
+      "  [  ] 05. Harness Engineering",
+      "  [  ] 06. Graph Engineering"
+    ]
+  }
+]

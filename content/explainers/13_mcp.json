@@ -1,0 +1,66 @@
+[
+  {
+    "tag": "AI Fundamentals • 03",
+    "headline": "MCP explained: the USB-C port for AI agents",
+    "window_title": "explainer — 03-mcp.md",
+    "narration": "Before MCP, every AI app needed custom glue code for Slack, GitHub, and Postgres. Model Context Protocol standardizes it.",
+    "terminal": [
+      "# Before MCP (N x M custom code):",
+      "  Claude --custom--> Slack",
+      "  Cursor --custom--> GitHub",
+      "  Agent  --custom--> Postgres",
+      "",
+      "# With MCP (1 standard protocol):",
+      "  [Any Agent] <==MCP==> [Any Tool]"
+    ]
+  },
+  {
+    "tag": "How It Works",
+    "headline": "Servers expose Tools, Resources & Prompts",
+    "window_title": "mcp — architecture",
+    "narration": "An MCP server exposes typed tools, read-only resources, and prompt templates that any compatible AI client can discover automatically.",
+    "terminal": [
+      "+-------------+     JSON-RPC     +-------------+",
+      "|  AI Client  | <==============> | MCP Server  |",
+      "| (Cursor/etc)|                  | (GitHub/DB) |",
+      "+-------------+                  +-------------+",
+      "",
+      "  Exposes:",
+      "  [ok] Tools     (run actions)",
+      "  [ok] Resources (read data)",
+      "  [ok] Prompts   (reusable flows)"
+    ]
+  },
+  {
+    "tag": "Why It Matters",
+    "headline": "Build a tool once, run it in any agent",
+    "window_title": "mcp — ecosystem",
+    "narration": "You build an internal MCP server once for your company API, and Claude, Cursor, or your custom agent can all use it safely.",
+    "terminal": [
+      "# Write 1 MCP server:",
+      "$ mcp-server-crm --stdio",
+      "",
+      "[ok] Works in Antigravity",
+      "[ok] Works in Claude Code",
+      "[ok] Works in Cursor & Codex",
+      "",
+      "# Zero duplicate integrations."
+    ]
+  },
+  {
+    "tag": "Save This Series",
+    "headline": "Next: Context Engineering > Prompting",
+    "window_title": "dababonpro — ai-series",
+    "narration": "Save this for your agent stack, and follow DababonPro for part four on Context Engineering.",
+    "terminal": [
+      "# AI Engineering Series:",
+      "",
+      "  [ok] 01. LLMs",
+      "  [ok] 02. RAG",
+      "  [ok] 03. MCP",
+      "  [->] 04. Context Engineering",
+      "  [  ] 05. Harness Engineering",
+      "  [  ] 06. Graph Engineering"
+    ]
+  }
+]
