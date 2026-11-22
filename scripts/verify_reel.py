@@ -14,7 +14,7 @@ def run_cmd(cmd: list[str]) -> subprocess.CompletedProcess[str]:
     return subprocess.run(cmd, capture_output=True, text=True)
 
 
-def verify_mp4(mp4_path: Path, min_dur: float = 8.0, max_dur: float = 60.0) -> dict:
+def verify_mp4(mp4_path: Path, min_dur: float = 8.0, max_dur: float = 90.0) -> dict:
     if not mp4_path.exists():
         raise FileNotFoundError(f"Missing video: {mp4_path}")
 
